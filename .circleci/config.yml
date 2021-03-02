@@ -27,7 +27,7 @@ workflows:
           context: terraform
           persist-workspace: true
           var_file: env.tfvars
-          var: image_uri=${AWS_ECR_ACCOUNT_URL}:${CIRCLE_SHA1}
+          var: image_uri=${AWS_ECR_ACCOUNT_URL}/rest_trigger_repository:${CIRCLE_SHA1}
           requires:
             - terraform/validate
             - aws-ecr/build-and-push-image
