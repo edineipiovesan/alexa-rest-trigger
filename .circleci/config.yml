@@ -1,9 +1,7 @@
 version: 2.1
-
 orbs:
   aws-ecr: circleci/aws-ecr@6.15.3
   terraform: circleci/terraform@1.2.0
-
 workflows:
   version: 2
   build_and_push_image:
