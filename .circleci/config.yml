@@ -1,0 +1,39 @@
+version: 2.1
+
+orbs:
+  aws-ecr: circleci/aws-ecr@6.15.3
+  terraform: circleci/terraform@1.2.0
+
+workflows:
+  version: 2
+  build_and_push_image:
+    jobs:
+      - aws-ecr/build-and-push-image:
+          repo: "rest_trigger_repository"
+          path: ./function/
+          tag: "${CIRCLE_SHA1}"
+          no-output-timeout: 5m
+      - terraform/fmt:
+          checkout: true
+          path: ./deploy/
+          context: terraform
+      - terraform/validate:
+          checkout: true
+          path: ./deploy/
+          context: terraform
+          requires:
+            - terraform/fmt
+      - terraform/plan:
+          checkout: true
+          path: ./deploy/
+          context: terraform
+          persist-workspace: true
+          requires:
+            - terraform/validate
+            - aws-ecr/build-and-push-image
+      - terraform/apply:
+          attach-workspace: true
+          context: terraform
+          path: ./deploy/
+          requires:
+            - terraform/plan
