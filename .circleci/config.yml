@@ -1,9 +1,7 @@
 version: 2.1
-
 orbs:
   aws-ecr: circleci/aws-ecr@6.15.3
   terraform: circleci/terraform@1.2.0
-
 workflows:
   version: 2
   build_and_push_image:
@@ -28,6 +26,8 @@ workflows:
           path: ./deploy/
           context: terraform
           persist-workspace: true
+          var_file: env.tfvars
+          var: image_uri=${AWS_ECR_ACCOUNT_URL}/rest_trigger_repository:${CIRCLE_SHA1}
           requires:
             - terraform/validate
             - aws-ecr/build-and-push-image
@@ -35,5 +35,7 @@ workflows:
           attach-workspace: true
           context: terraform
           path: ./deploy/
+          var_file: env.tfvars
+          var: image_uri=${AWS_ECR_ACCOUNT_URL}/rest_trigger_repository:${CIRCLE_SHA1}
           requires:
             - terraform/plan
